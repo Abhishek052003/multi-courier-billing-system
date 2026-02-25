@@ -1,0 +1,123 @@
+/* Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Background */
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Main Card */
+.container {
+    width: 420px;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+/* Title */
+h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #1e3c72;
+    font-weight: 600;
+}
+
+/* Labels */
+label {
+    display: block;
+    margin-bottom: 6px;
+    margin-top: 15px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #444;
+}
+
+/* Dropdown */
+select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: 0.2s ease;
+}
+
+select:focus {
+    border-color: #2a5298;
+    box-shadow: 0 0 5px rgba(42, 82, 152, 0.4);
+}
+
+/* File Input */
+input[type="file"] {
+    width: 100%;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+    cursor: pointer;
+}
+
+/* Button */
+button {
+    margin-top: 25px;
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    background: #2a5298;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+button:hover {
+    background: #1e3c72;
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* Status Message */
+#status {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Success */
+.success {
+    color: green;
+}
+
+/* Error */
+.error {
+    color: red;
+}
+
+/* Fade Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
