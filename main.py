@@ -24,6 +24,11 @@ from services.trackon_north_service import (
     load_all_trackon_north_rates
 )
 
+from services.trackon_west_service import (
+    calculate_trackon_west_rate,
+    load_all_trackon_west_rates
+)
+
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -463,6 +468,79 @@ async def upload_trackon_north_file(file: UploadFile = File(...)):
             media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             headers={
                 "Content-Disposition": "attachment; filename=trackon_north_billing_output.xlsx"
+            }
+        )
+
+    except HTTPException as e:
+        raise e
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/upload/trackon_west")
+async def upload_trackon_west_file(file: UploadFile = File(...)):
+
+    try:
+        contents = await file.read()
+        df = pd.read_excel(io.BytesIO(contents))
+
+        required_columns = ["Zone", "Weight"]
+        for col in required_columns:
+            if col not in df.columns:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Missing column: {col}"
+                )
+
+        # 🔥 Load rates once
+        rate_dict = load_all_trackon_west_rates()
+
+        rounded_weights = []
+        final_rates = []
+
+        for index, row in df.iterrows():
+
+            if pd.isna(row["Zone"]):
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Zone missing at row {index + 2}"
+                )
+
+            if pd.isna(row["Weight"]):
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Weight missing at row {index + 2}"
+                )
+
+            zone_input = str(row["Zone"])
+
+            try:
+                weight = float(row["Weight"])
+            except:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Invalid weight at row {index + 2}"
+                )
+
+            rounded, rate = calculate_trackon_west_rate(
+                zone_input, weight, rate_dict
+            )
+
+            rounded_weights.append(rounded)
+            final_rates.append(rate)
+
+        df["Rounded_Weight"] = rounded_weights
+        df["Calculated_Rate"] = final_rates
+
+        output = io.BytesIO()
+        df.to_excel(output, index=False)
+        output.seek(0)
+
+        return StreamingResponse(
+            output,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={
+                "Content-Disposition": "attachment; filename=trackon_west_billing_output.xlsx"
             }
         )
 
